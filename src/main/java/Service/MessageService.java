@@ -16,7 +16,11 @@ public class MessageService {
         return msgDAO.getAllMessages();
     }
 
-    public Message getMessageById(int id) {
-        return msgDAO.getMessageById(id);
+    public Message getMessageById(int msgId) {
+        return msgDAO.getMessageById(msgId);
+    }
+
+    public List<Message> getMessagesByAccountId(int acctId) {
+        return msgDAO.getMessagesByAccountId(acctId);
     }
 }

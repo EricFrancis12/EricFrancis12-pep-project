@@ -138,6 +138,12 @@ public class SocialMediaController {
     }
 
     private void handleGetMessagesByAccountId(Context ctx) {
+        try {
+            int acctId = Integer.parseInt(ctx.pathParam("account_id"));
+            ctx.json(msgService.getMessagesByAccountId(acctId));
 
+        } catch (NumberFormatException e) {
+            ctx.status(200);
+        }
     }
 }
