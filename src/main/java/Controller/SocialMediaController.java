@@ -1,33 +1,102 @@
 package Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import Model.Message;
+import Service.MessageService;
+import Util.MessageUtil;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 /**
- * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
+ * You will need to write your own endpoints and handlers for your
+ * controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should
- * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
+ * refer to prior mini-project labs and lecture materials for guidance on how a
+ * controller may be built.
  */
 public class SocialMediaController {
+    private final MessageService msgService = new MessageService();
+
     /**
-     * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
+     * In order for the test cases to work, you will need to write the endpoints in
+     * the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
-     * @return a Javalin app object which defines the behavior of the Javalin controller.
+     * 
+     * @return a Javalin app object which defines the behavior of the Javalin
+     *         controller.
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
+
+        app.post("/register", this::handleRegister);
+        app.post("/login", this::handleLogin);
+
+        app.post("/messages", this::handleCreateMessage);
+        app.get("/messages", this::handleGetAllMessages);
+        app.get("/messages/{message_id}", this::handleGetMessageById);
+        app.patch("/messages/{message_id}", this::handleUpdateMessageById);
+        app.delete("/messages/{message_id}", this::handleDeleteMessageById);
+
+        app.get("/accounts/{account_id}/messages", this::handleGetMessagesByAccountId);
 
         return app;
     }
 
-    /**
-     * This is an example handler for an example endpoint.
-     * @param context The Javalin Context object manages information about both the HTTP request and response.
-     */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
+    private void handleRegister(Context ctx) {
+
     }
 
+    private void handleLogin(Context ctx) {
 
+    }
+
+    private void handleCreateMessage(Context ctx) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Message msg = mapper.readValue(ctx.body(), Message.class);
+
+            if (!MessageUtil.isValidMessage(msg)) {
+                ctx.status(400);
+                return;
+            }
+
+            Message addedMsg = msgService.addMessage(msg);
+            if (addedMsg == null) {
+                ctx.status(400);
+                return;
+            }
+
+            ctx.json(mapper.writeValueAsString(addedMsg));
+
+        } catch (JsonProcessingException ex) {
+            ctx.status(400);
+        }
+    }
+
+    private void handleGetAllMessages(Context ctx) {
+        ctx.json(msgService.getAllMessages());
+    }
+
+    private void handleGetMessageById(Context ctx) {
+        try {
+            int msgId = Integer.parseInt(ctx.pathParam("message_id"));
+            ctx.json(msgService.getMessageById(msgId));
+        } catch (NumberFormatException e) {
+            ctx.status(200);
+        }
+    }
+
+    private void handleUpdateMessageById(Context ctx) {
+
+    }
+
+    private void handleDeleteMessageById(Context ctx) {
+
+    }
+
+    private void handleGetMessagesByAccountId(Context ctx) {
+
+    }
 }
