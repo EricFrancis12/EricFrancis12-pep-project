@@ -3,8 +3,11 @@ package Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import Model.Account;
 import Model.Message;
+import Service.AccountService;
 import Service.MessageService;
+import Util.AccountUtil;
 import Util.MessageUtil;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -17,6 +20,7 @@ import io.javalin.http.Context;
  * controller may be built.
  */
 public class SocialMediaController {
+    private final AccountService acctService = new AccountService();
     private final MessageService msgService = new MessageService();
 
     /**
@@ -45,18 +49,54 @@ public class SocialMediaController {
     }
 
     private void handleRegister(Context ctx) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
 
+            Account acct = mapper.readValue(ctx.body(), Account.class);
+            if (!AccountUtil.isValidAccount(acct)) {
+                ctx.status(400);
+                return;
+            }
+
+            Account addedAcct = acctService.addAccount(acct);
+            if (addedAcct == null) {
+                ctx.status(400);
+                return;
+            }
+
+            ctx.json(mapper.writeValueAsString(addedAcct));
+
+        } catch (JsonProcessingException ex) {
+            ctx.status(400);
+        }
     }
 
     private void handleLogin(Context ctx) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
 
+            Account acct = mapper.readValue(ctx.body(), Account.class);
+
+            Account foundAcct = acctService.getAccountByUsernameAndPassword(
+                    acct.getUsername(),
+                    acct.getPassword());
+            if (foundAcct == null) {
+                ctx.status(401);
+                return;
+            }
+
+            ctx.json(mapper.writeValueAsString(foundAcct));
+
+        } catch (JsonProcessingException ex) {
+            ctx.status(401);
+        }
     }
 
     private void handleCreateMessage(Context ctx) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            Message msg = mapper.readValue(ctx.body(), Message.class);
 
+            Message msg = mapper.readValue(ctx.body(), Message.class);
             if (!MessageUtil.isValidMessage(msg)) {
                 ctx.status(400);
                 return;
@@ -83,6 +123,7 @@ public class SocialMediaController {
         try {
             int msgId = Integer.parseInt(ctx.pathParam("message_id"));
             ctx.json(msgService.getMessageById(msgId));
+
         } catch (NumberFormatException e) {
             ctx.status(200);
         }
