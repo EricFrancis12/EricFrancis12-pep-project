@@ -33,7 +33,7 @@ public class MessageDAO {
                         msg.getTime_posted_epoch());
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         return null;
@@ -59,7 +59,7 @@ public class MessageDAO {
                 msgs.add(msg);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         return msgs;
@@ -83,7 +83,7 @@ public class MessageDAO {
                         resultSet.getLong("time_posted_epoch"));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         return null;
@@ -110,7 +110,7 @@ public class MessageDAO {
                 msgs.add(msg);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         return msgs;
@@ -128,7 +128,7 @@ public class MessageDAO {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -143,7 +143,7 @@ public class MessageDAO {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 }

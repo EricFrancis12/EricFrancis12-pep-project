@@ -8,6 +8,7 @@ import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
 import Util.AccountUtil;
+import Util.IntegerUtil;
 import Util.MessageUtil;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -120,25 +121,28 @@ public class SocialMediaController {
     }
 
     private void handleGetMessageById(Context ctx) {
-        try {
-            int msgId = Integer.parseInt(ctx.pathParam("message_id"));
-
-            Message msg = msgService.getMessageById(msgId);
-            if (msg == null) {
-                ctx.status(200);
-                return;
-            }
-
-            ctx.json(msg);
-
-        } catch (NumberFormatException e) {
+        Integer msgId = IntegerUtil.safeParseInt(ctx.pathParam("message_id"));
+        if (msgId == null) {
             ctx.status(200);
+            return;
         }
+
+        Message msg = msgService.getMessageById(msgId);
+        if (msg == null) {
+            ctx.status(200);
+            return;
+        }
+
+        ctx.json(msg);
     }
 
     private void handleUpdateMessageById(Context ctx) {
         try {
-            int msgId = Integer.parseInt(ctx.pathParam("message_id"));
+            Integer msgId = IntegerUtil.safeParseInt(ctx.pathParam("message_id"));
+            if (msgId == null) {
+                ctx.status(400);
+                return;
+            }
 
             ObjectMapper mapper = new ObjectMapper();
 
@@ -158,36 +162,34 @@ public class SocialMediaController {
 
             ctx.json(mapper.writeValueAsString(updatedMsg));
 
-        } catch (NumberFormatException | JsonProcessingException e) {
-            ctx.status(200);
+        } catch (JsonProcessingException e) {
+            ctx.status(400);
         }
     }
 
     private void handleDeleteMessageById(Context ctx) {
-        try {
-            int msgId = Integer.parseInt(ctx.pathParam("message_id"));
-
-            Message msg = msgService.getMessageById(msgId);
-            if (msg == null) {
-                ctx.status(200);
-                return;
-            }
-
-            msgService.deleteMessageById(msgId);
-            ctx.json(msg);
-
-        } catch (NumberFormatException e) {
+        Integer msgId = IntegerUtil.safeParseInt(ctx.pathParam("message_id"));
+        if (msgId == null) {
             ctx.status(200);
+            return;
         }
+
+        Message msg = msgService.getMessageById(msgId);
+        if (msg == null) {
+            ctx.status(200);
+            return;
+        }
+
+        msgService.deleteMessageById(msgId);
+        ctx.json(msg);
     }
 
     private void handleGetMessagesByAccountId(Context ctx) {
-        try {
-            int acctId = Integer.parseInt(ctx.pathParam("account_id"));
-            ctx.json(msgService.getMessagesByAccountId(acctId));
-
-        } catch (NumberFormatException e) {
+        Integer acctId = IntegerUtil.safeParseInt(ctx.pathParam("account_id"));
+        if (acctId == null) {
             ctx.status(200);
+            return;
         }
+        ctx.json(msgService.getMessagesByAccountId(acctId));
     }
 }

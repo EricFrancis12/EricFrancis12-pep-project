@@ -29,7 +29,7 @@ public class AccountDAO {
                         acct.getPassword());
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         return null;
@@ -53,7 +53,7 @@ public class AccountDAO {
                         resultSet.getString("password"));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
         return null;
