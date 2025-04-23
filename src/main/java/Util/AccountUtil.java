@@ -14,6 +14,8 @@ public class AccountUtil {
     }
 
     public static boolean isValidAccount(Account acct) {
-        return isValidUsername(acct.getUsername()) && isValidPassword(acct.getPassword());
+        return acct != null
+                && isValidUsername(acct.getUsername())
+                && isValidPassword(acct.getPassword());
     }
 }

@@ -66,7 +66,7 @@ public class SocialMediaController {
 
             ctx.json(mapper.writeValueAsString(addedAcct));
 
-        } catch (JsonProcessingException ex) {
+        } catch (JsonProcessingException e) {
             ctx.status(400);
         }
     }
@@ -87,7 +87,7 @@ public class SocialMediaController {
 
             ctx.json(mapper.writeValueAsString(foundAcct));
 
-        } catch (JsonProcessingException ex) {
+        } catch (JsonProcessingException e) {
             ctx.status(401);
         }
     }
@@ -110,7 +110,7 @@ public class SocialMediaController {
 
             ctx.json(mapper.writeValueAsString(addedMsg));
 
-        } catch (JsonProcessingException ex) {
+        } catch (JsonProcessingException e) {
             ctx.status(400);
         }
     }
@@ -131,7 +131,7 @@ public class SocialMediaController {
 
             ctx.json(msg);
 
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException e) {
             ctx.status(200);
         }
     }
@@ -158,10 +158,8 @@ public class SocialMediaController {
 
             ctx.json(mapper.writeValueAsString(updatedMsg));
 
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException | JsonProcessingException e) {
             ctx.status(200);
-        } catch (JsonProcessingException ex) {
-            ctx.status(400);
         }
     }
 

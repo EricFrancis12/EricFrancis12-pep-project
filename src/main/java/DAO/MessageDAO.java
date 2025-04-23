@@ -65,14 +65,14 @@ public class MessageDAO {
         return msgs;
     }
 
-    public Message getMessageById(int id) {
+    public Message getMessageById(int msgId) {
         Connection connection = ConnectionUtil.getConnection();
 
         try {
             String sql = "SELECT * FROM message WHERE message_id = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, msgId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -89,7 +89,7 @@ public class MessageDAO {
         return null;
     }
 
-    public List<Message> getMessagesByAccountId(int id) {
+    public List<Message> getMessagesByAccountId(int acctId) {
         Connection connection = ConnectionUtil.getConnection();
         List<Message> msgs = new ArrayList<>();
 
@@ -97,7 +97,7 @@ public class MessageDAO {
             String sql = "SELECT * FROM message WHERE posted_by = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, acctId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -116,7 +116,7 @@ public class MessageDAO {
         return msgs;
     }
 
-    public void updateMessageTextById(int id, String msgText) {
+    public void updateMessageTextById(int msgId, String msgText) {
         Connection connection = ConnectionUtil.getConnection();
 
         try {
@@ -124,7 +124,7 @@ public class MessageDAO {
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, msgText);
-            preparedStatement.setInt(2, id);
+            preparedStatement.setInt(2, msgId);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -132,14 +132,14 @@ public class MessageDAO {
         }
     }
 
-    public void deleteMessageById(int id) {
+    public void deleteMessageById(int msgId) {
         Connection connection = ConnectionUtil.getConnection();
 
         try {
             String sql = "Delete FROM message WHERE message_id = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, msgId);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
