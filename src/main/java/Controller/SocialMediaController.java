@@ -124,17 +124,56 @@ public class SocialMediaController {
             int msgId = Integer.parseInt(ctx.pathParam("message_id"));
             ctx.json(msgService.getMessageById(msgId));
 
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ex) {
             ctx.status(200);
         }
     }
 
     private void handleUpdateMessageById(Context ctx) {
+        try {
+            int msgId = Integer.parseInt(ctx.pathParam("message_id"));
 
+            ObjectMapper mapper = new ObjectMapper();
+
+            Message msg = mapper.readValue(ctx.body(), Message.class);
+            if (!MessageUtil.isValidMessageText(msg.getMessage_text())) {
+                ctx.status(400);
+                return;
+            }
+
+            Message updatedMsg = msgService.updateMessageTextById(
+                    msgId,
+                    msg.getMessage_text());
+            if (updatedMsg == null) {
+                ctx.status(400);
+                return;
+            }
+
+            ctx.json(mapper.writeValueAsString(updatedMsg));
+
+        } catch (NumberFormatException ex) {
+            ctx.status(200);
+        } catch (JsonProcessingException ex) {
+            ctx.status(400);
+        }
     }
 
     private void handleDeleteMessageById(Context ctx) {
+        try {
+            int msgId = Integer.parseInt(ctx.pathParam("message_id"));
 
+            Message msg = msgService.getMessageById(msgId);
+            if (msg == null) {
+                ctx.status(200);
+                return;
+            }
+
+            msgService.deleteMessageById(msgId);
+            ctx.json(msg);
+
+        } catch (NumberFormatException e) {
+            ctx.status(200);
+        }
     }
 
     private void handleGetMessagesByAccountId(Context ctx) {
